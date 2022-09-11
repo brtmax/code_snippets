@@ -21,9 +21,9 @@ int main(void) {
 
     capturedVideo.read(imgFrame);
 
-    char keyPressed = 0;
+    char actualKeyPressed = 0;
 
-    while(capturedVideo.isOpened() && !checkForEscapeKey(keyPressed)) {
+    while(capturedVideo.isOpened() && !escapeKeyHasBeenPressed(actualKeyPressed)) {
 
         cv::imshow("imageFrame", imageFrame);
         // prepare for next iteration
@@ -35,12 +35,12 @@ int main(void) {
             break;
         }
 
-        keyPressed = cv::waitKey(1);
+        actualKeyPressed = cv::waitKey(1);
     }
 
     // If the user hasn't pressed the escape key, then the window 
     // keeps showing to display the end message
-    if (!checkForEscapeKey(keyPressed)) {
+    if (!escapeKeyHasBeenPressed(actualKeyPressed)) {
         cv::waitKey(0);
     }
 
@@ -49,9 +49,9 @@ int main(void) {
 }
 
 // function seperated for extendability in the future
-boolean checkForEscapeKey(char keyPressed) {
+boolean escapeKeyHasBeenPressed(char actualKeyPressed) {
 
-    if (keyPressed == 27) {
+    if (actualKeyPressed == 27) {
         return true;
     } else {
         return false;
