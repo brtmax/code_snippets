@@ -1,3 +1,5 @@
+// Basic openCV video playing function for future reference
+
 #include<opencv2/core/core.hpp>
 #include<opencv2/highgui/highgui.hpp>
 #include<opencv2/imgproc/imgproc.hpp>
@@ -36,6 +38,8 @@ int main(void) {
         keyPressed = cv::waitKey(1);
     }
 
+    // If the user hasn't pressed the escape key, then the window 
+    // keeps showing to display the end message
     if (!checkForEscapeKey(keyPressed)) {
         cv::waitKey(0);
     }
@@ -44,6 +48,7 @@ int main(void) {
     
 }
 
+// function seperated for extendability in the future
 boolean checkForEscapeKey(char keyPressed) {
 
     if (keyPressed == 27) {
