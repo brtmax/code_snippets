@@ -1,3 +1,6 @@
+// Template functors use cases for future references
+// To be continued
+
 #include <vector>
 #include <algorithm>
 #include <utility>
@@ -42,6 +45,9 @@ struct FindByWeightFunctor {
     int m_weight;
 };
 
+
+// This enables us to take any type of value that behaves
+// like a pair, and search for any kind of value within that pair
 template <typename T>
 struct MatchFirstFunctor {
     MatchFirstFunctor(const& T) 
@@ -49,7 +55,7 @@ struct MatchFirstFunctor {
         {}
 
         // This way we can compare at to anything that has the right
-        // interface
+        // interface. As long as it has the == operator defined it will work
         template <typename M>
         bool operator()(M const& pair) {
             return pair.first == m_i;
