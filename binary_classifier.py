@@ -11,11 +11,12 @@ from torch.utils.data import TensorDataset
 
 
 # Define the transform to preprocess the data
+# Define the transform to preprocess the data
 transform = transforms.Compose([
     transforms.RandomRotation(degrees=10),
     transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
     transforms.ToTensor(),
-    transforms.Normalize((0.5,), (0.5,))
+    transforms.Normalize((0.1307,), (0.3081,))
 ])
 
 # Load the EMNIST dataset and select the classes of interest
@@ -47,7 +48,9 @@ class Net(nn.Module):
         super(Net, self).__init__()
 
         self.conv1 = nn.Conv2d(1, 32, kernel_size=3)
+        self.bn1 = nn.BatchNorm2d(32)
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3)
+        self.bn2 = nn.BatchNorm2d(64)
         self.conv2_drop = nn.Dropout2d()
         self.fc1 = nn.Linear(64*5*5, 128)
         self.fc2 = nn.Linear(128, 2)
@@ -55,8 +58,8 @@ class Net(nn.Module):
     def forward(self, x):
         x = x.float()
         x = x.unsqueeze(1)
-        x = F.relu(F.max_pool2d(self.conv1(x), 2))
-        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
+        x = self.bn1(F.leaky_relu(F.max_pool2d(self.conv1(x), 2)))
+        x = self.bn2(F.leaky_relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2)))
         x = x.view(-1, 64*5*5)
         x = F.relu(self.fc1(x))
         x = F.dropout(x, training=self.training)
