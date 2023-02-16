@@ -12,6 +12,8 @@ from torch.utils.data import TensorDataset
 
 # Define the transform to preprocess the data
 transform = transforms.Compose([
+    transforms.RandomRotation(degrees=10),
+    transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
     transforms.ToTensor(),
     transforms.Normalize((0.5,), (0.5,))
 ])
@@ -69,7 +71,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.0001)
 criterion = nn.CrossEntropyLoss()
 
 # Train the model
-num_epochs = 20
+num_epochs = 10
 for epoch in range(num_epochs):
     model.train()
     running_loss = 0.0
