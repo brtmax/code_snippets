@@ -1,45 +1,60 @@
-#include <string>
 #include <iostream>
-#include <utility>
-#include <algorithm>
-#include <vector>
-#include <queue>
+#include <sstream>
 
-// comparison function for the priority queue
-struct CompareCounts {
-    bool operator()(const std::pair<int, char>& a, const std::pair<int, char>& b) const {
-        return a.first < b.first;
-    }
-};
+// O(countFirstChar + countSecondChar)
 
-std::string generateString(std::initializer_list<std::pair<int, char>> counts) {
-    std::string result;
-    int total_count = 0;
-    // initialize a priority queue to track the remaining counts of each character type
-    std::priority_queue<std::pair<int, char>, std::vector<std::pair<int, char>>, CompareCounts> counts_queue;
-    // populate the priority queue with the input counts and comute the total count of characters to generate
-    for (const auto& count : counts) {
-        counts_queue.push(count);
-        total_count += count.first;
+// Define the variables
+const int MAX_CONSECUTIVE_COUNT = 4;
+const char FIRST_CHAR = 'X';
+const char SECOND_CHAR = 'O';
+const int COUNT_FIRST_CHAR = 6;
+const int COUNT_SECOND_CHAR = 1;
+
+std::string generateString(int countFirstChar, int countSecondChar, int maxConsecutiveCount, char firstChar, char secondChar) {
+    if (countFirstChar < 0 || countSecondChar < 0 || maxConsecutiveCount <= 0) {
+        return "Invalid input: countFirstChar, countSecondChar, and maxConsecutiveCount must be non-negative, maxConsecutiveCount must be positive.";
     }
-    // generate the characters by repeatedly popping the character type with the smallest remaining count from the priority queue
-    for (int i = 0; i < total_count; i++) {
-        // pop the character type with the smallest remaining count from the priority queue
-        auto count = counts_queue.top();
-        counts_queue.pop();
-        // append a character of this type to the result string
-        result += count.second;
-        // decrement the count and push the character type back onto the priority queue if the count is still greatdr than zero
-        count.first--;
-        if (count.first > 0) {
-            counts_queue.push(count);
+
+    int maxCount = std::max(countFirstChar, countSecondChar);
+    int minCount = std::min(countFirstChar, countSecondChar);
+    if (maxCount > (maxConsecutiveCount - 1) * (minCount + 1) + minCount) {
+        return "Invalid input: impossible to generate string with no more than maxConsecutiveCount consecutive characters.";
+    }
+
+    std::stringstream result;
+    char lastChar = ' ';
+    int consecutiveCount = 0;
+
+    while (countFirstChar > 0 || countSecondChar > 0) {
+        if (countFirstChar > 0 && lastChar == firstChar && consecutiveCount >= maxConsecutiveCount - 1) {
+            result << secondChar;
+            lastChar = secondChar;
+            countSecondChar--;
+            consecutiveCount = 0;
+        } else if (countSecondChar > 0 && lastChar == secondChar && consecutiveCount >= maxConsecutiveCount - 1) {
+            result << firstChar;
+            lastChar = firstChar;
+            countFirstChar--;
+            consecutiveCount = 0;
+        } else {
+            if (countFirstChar > countSecondChar) {
+                result << firstChar;
+                lastChar = firstChar;
+                countFirstChar--;
+            } else {
+                result << secondChar;
+                lastChar = secondChar;
+                countSecondChar--;
+            }
+            consecutiveCount++;
         }
     }
-    return result;
+
+    return result.str();
 }
 
 int main() {
-    std::string xoxo = generateString({{3, 'X'}, {2, 'O'}});
+    std::string xoxo = generateString(COUNT_FIRST_CHAR, COUNT_SECOND_CHAR, MAX_CONSECUTIVE_COUNT, FIRST_CHAR, SECOND_CHAR);
     std::cout << xoxo << std::endl;
     return 0;
 }
