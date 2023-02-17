@@ -10,39 +10,40 @@ const char SECOND_CHAR = 'O';
 const int COUNT_FIRST_CHAR = 6;
 const int COUNT_SECOND_CHAR = 1;
 
+
 std::string generateString(int countFirstChar, int countSecondChar, int maxConsecutiveCount, char firstChar, char secondChar) {
     if (countFirstChar < 0 || countSecondChar < 0 || maxConsecutiveCount <= 0) {
-        return "Invalid input: countFirstChar, countSecondChar, and maxConsecutiveCount must be non-negative, maxConsecutiveCount must be positive.";
+        throw std::invalid_argument("Invalid input: countFirstChar, countSecondChar, and maxConsecutiveCount must be non-negative, maxConsecutiveCount must be positive.");
     }
 
     int maxCount = std::max(countFirstChar, countSecondChar);
     int minCount = std::min(countFirstChar, countSecondChar);
     if (maxCount > (maxConsecutiveCount - 1) * (minCount + 1) + minCount) {
-        return "Invalid input: impossible to generate string with no more than maxConsecutiveCount consecutive characters.";
+        throw std::invalid_argument("Invalid input: impossible to generate string with no more than maxConsecutiveCount consecutive characters.");
     }
 
-    std::stringstream result;
+    std::string result;
     char lastChar = ' ';
     int consecutiveCount = 0;
 
     while (countFirstChar > 0 || countSecondChar > 0) {
         if (countFirstChar > 0 && lastChar == firstChar && consecutiveCount >= maxConsecutiveCount - 1) {
-            result << secondChar;
+            result.push_back(secondChar);
             lastChar = secondChar;
             countSecondChar--;
             consecutiveCount = 0;
         } else if (countSecondChar > 0 && lastChar == secondChar && consecutiveCount >= maxConsecutiveCount - 1) {
-            result << firstChar;
+            result.push_back(firstChar);
             lastChar = firstChar;
             countFirstChar--;
             consecutiveCount = 0;
         } else {
             if (countFirstChar > countSecondChar) {
-                result << firstChar;
+                result.push_back(firstChar);
                 lastChar = firstChar;
                 countFirstChar--;
             } else {
-                result << secondChar;
+                result.push_back(secondChar);
                 lastChar = secondChar;
                 countSecondChar--;
             }
@@ -50,7 +51,7 @@ std::string generateString(int countFirstChar, int countSecondChar, int maxConse
         }
     }
 
-    return result.str();
+    return result;
 }
 
 int main() {
