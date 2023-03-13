@@ -6,6 +6,7 @@ def histogram_intersection_kernel(x, y):
 
     for i in range(x):
         value = value + np.min(x[i], y[i])
+return value
 
 # The histogram intersection kernel is a similarity measure between two histograms, and is 
 # used in various computer vision and image processing applications. It is defined as the 
